@@ -1,403 +1,353 @@
-# 🌾 Crop Recommendation System
+# Crop Recommendation System
 
-An intelligent web-based application that recommends the most suitable crops to grow based on soil and weather parameters using machine learning.
+A Flask-based machine learning project that recommends the most suitable crop from soil and weather inputs. The app uses a trained Random Forest classifier, while `load_crop_data.py` provides a complete data inspection, cleaning, preprocessing, and model comparison report.
 
----
-
-## 📋 Table of Contents
+## Table of Contents
 
 - [Overview](#overview)
-- [Features](#features)
-- [Prerequisites](#prerequisites)
+- [Project Highlights](#project-highlights)
+- [Dataset and Data Check](#dataset-and-data-check)
+- [Load Data Script Output](#load-data-script-output)
+- [Project Structure](#project-structure)
 - [Installation](#installation)
 - [How to Run](#how-to-run)
-- [Project Structure](#project-structure)
-- [Usage Guide](#usage-guide)
 - [How It Works](#how-it-works)
+- [Web App Usage](#web-app-usage)
 - [Technologies Used](#technologies-used)
-- [Data Requirements](#data-requirements)
+- [Troubleshooting](#troubleshooting)
 - [Future Improvements](#future-improvements)
 
----
+## Overview
 
-## 🎯 Overview
+This project helps users predict the best crop for given agricultural conditions. The model uses seven features:
 
-The **Crop Recommendation System** is a machine learning-powered web application designed to help farmers and agricultural professionals make data-driven decisions about crop selection. By inputting soil nutrients, pH level, and environmental conditions, the system predicts the most suitable crop to cultivate.
+| Feature     | Meaning                          |
+| ----------- | -------------------------------- |
+| N           | Nitrogen content in soil         |
+| P           | Phosphorus content in soil       |
+| K           | Potassium content in soil        |
+| pH          | Soil acidity or alkalinity level |
+| temperature | Average temperature              |
+| humidity    | Relative humidity                |
+| rainfall    | Rainfall amount                  |
 
-This system uses a **Random Forest Classification Model** trained on historical agricultural data to provide accurate recommendations.
+The backend trains a machine learning model on the crop dataset, and the web interface accepts user inputs to generate a recommendation instantly.
 
----
+## Project Highlights
 
-## ✨ Features
+| Area               | Details                                      |
+| ------------------ | -------------------------------------------- |
+| Model              | Random Forest Classifier                     |
+| Input Features     | N, P, K, pH, temperature, humidity, rainfall |
+| Data Scaling       | StandardScaler                               |
+| Training Split     | 80 percent train, 20 percent test            |
+| Validation Metrics | Accuracy and weighted F1-score               |
+| Web Interface      | Flask + HTML template                        |
 
-✅ **Easy-to-use Web Interface** - Clean, responsive UI for crop recommendations  
-✅ **Real-time Predictions** - Instant crop suggestions based on inputs  
-✅ **Machine Learning Powered** - Random Forest model for accurate predictions  
-✅ **Input Validation** - Validates all numeric inputs for data integrity  
-✅ **Mobile Responsive** - Works seamlessly on desktop and mobile devices  
-✅ **Error Handling** - User-friendly error messages for invalid inputs
+## Dataset and Data Check
 
----
+The dataset file is `Crop_recommendation.csv`. The cleaning script checks for missing values, duplicate rows, and data consistency before training.
 
-## 📦 Prerequisites
+### Schema
 
-Before you begin, ensure you have the following installed:
+| Column       | Type    | Role    |
+| ------------ | ------- | ------- |
+| N            | Numeric | Feature |
+| P            | Numeric | Feature |
+| K            | Numeric | Feature |
+| pH           | Numeric | Feature |
+| temperature  | Numeric | Feature |
+| humidity     | Numeric | Feature |
+| rainfall     | Numeric | Feature |
+| label / crop | Text    | Target  |
 
-- **Python 3.7+** ([Download Python](https://www.python.org/downloads/))
-- **pip** (Python package manager - usually comes with Python)
-- **Git** (optional, for version control)
+## Load Data Script Output
 
-### Check if Python is installed:
+Running `python3 load_crop_data.py` produced the following result.
 
-```bash
-python --version
-# or
-python3 --version
+### Data Quality Summary
+
+| Check                                | Result |
+| ------------------------------------ | ------ |
+| Total missing values before cleaning | 0      |
+| Duplicate rows before cleaning       | 0      |
+| Total missing values after cleaning  | 0      |
+| Duplicate rows after cleaning        | 0      |
+
+### First 5 Rows of the Cleaned Dataset
+
+| Row | N   | P   | K   | temperature | humidity  | pH       | rainfall   | label |
+| --- | --- | --- | --- | ----------- | --------- | -------- | ---------- | ----- |
+| 0   | 90  | 42  | 43  | 20.879744   | 82.002744 | 6.502985 | 202.935536 | rice  |
+| 1   | 85  | 58  | 41  | 21.770462   | 80.319644 | 7.038096 | 226.655537 | rice  |
+| 2   | 60  | 55  | 44  | 23.004459   | 82.320763 | 7.840207 | 263.964248 | rice  |
+| 3   | 74  | 35  | 40  | 26.491096   | 80.158363 | 6.980401 | 242.864034 | rice  |
+| 4   | 78  | 42  | 42  | 20.130175   | 81.604873 | 7.628473 | 262.717340 | rice  |
+
+### Feature Matrix Preview
+
+| Row | N   | P   | K   | pH       | temperature | humidity  | rainfall   |
+| --- | --- | --- | --- | -------- | ----------- | --------- | ---------- |
+| 0   | 90  | 42  | 43  | 6.502985 | 20.879744   | 82.002744 | 202.935536 |
+| 1   | 85  | 58  | 41  | 7.038096 | 21.770462   | 80.319644 | 226.655537 |
+| 2   | 60  | 55  | 44  | 7.840207 | 23.004459   | 82.320763 | 263.964248 |
+| 3   | 74  | 35  | 40  | 6.980401 | 26.491096   | 80.158363 | 242.864034 |
+| 4   | 78  | 42  | 42  | 7.628473 | 20.130175   | 81.604873 | 262.717340 |
+
+### Normalized Feature Matrix Preview
+
+| Row | N        | P         | K         | pH       | temperature | humidity | rainfall |
+| --- | -------- | --------- | --------- | -------- | ----------- | -------- | -------- |
+| 0   | 1.068797 | -0.344551 | -0.101688 | 0.043302 | -0.935587   | 0.472666 | 1.810361 |
+| 1   | 0.933329 | 0.140616  | -0.141185 | 0.734873 | -0.759646   | 0.397051 | 2.242058 |
+| 2   | 0.255986 | 0.049647  | -0.081939 | 1.771510 | -0.515898   | 0.486954 | 2.921066 |
+| 3   | 0.635298 | -0.556811 | -0.160933 | 0.660308 | 0.172807    | 0.389805 | 2.537048 |
+| 4   | 0.743673 | -0.344551 | -0.121436 | 1.497868 | -1.083647   | 0.454792 | 2.898373 |
+
+### Target Vector Preview
+
+| Row | label |
+| --- | ----- |
+| 0   | rice  |
+| 1   | rice  |
+| 2   | rice  |
+| 3   | rice  |
+| 4   | rice  |
+
+### Train-Test Split
+
+| Split   | Shape     |
+| ------- | --------- |
+| X_train | (1760, 7) |
+| X_test  | (440, 7)  |
+| y_train | (1760,)   |
+| y_test  | (440,)    |
+
+### Trained Models
+
+| Model         |
+| ------------- |
+| svm           |
+| knn           |
+| random_forest |
+
+### Model Comparison
+
+| Model         | Accuracy | Weighted F1-score |
+| ------------- | -------- | ----------------- |
+| random_forest | 0.995455 | 0.995452          |
+| svm           | 0.984091 | 0.984038          |
+| knn           | 0.979545 | 0.979283          |
+
+## Project Structure
+
+```text
+Crop Recommendation System/
+├── app.py
+├── load_crop_data.py
+├── Crop_recommendation.csv
+├── requirements.txt
+├── templates/
+│   └── index.html
+└── README.md
 ```
 
----
+| File                    | Purpose                                                            |
+| ----------------------- | ------------------------------------------------------------------ |
+| app.py                  | Flask app, model training, and crop prediction endpoint            |
+| load_crop_data.py       | Data cleaning, preprocessing, scaling, and model comparison script |
+| Crop_recommendation.csv | Dataset used for training and evaluation                           |
+| requirements.txt        | Python dependencies                                                |
+| templates/index.html    | Frontend page for user input and prediction display                |
 
-## 🚀 Installation
+## Folder Structure Setup
 
-### Step 1: Clone or Download the Project
+If you want to recreate this project from scratch, use the same structure below:
 
-If you have Git:
+```text
+Crop Recommendation System/
+├── app.py
+├── load_crop_data.py
+├── Crop_recommendation.csv
+├── requirements.txt
+├── README.md
+└── templates/
+	└── index.html
+```
+
+### What Each Folder or File Does
+
+| Path                    | Purpose                                                                                              |
+| ----------------------- | ---------------------------------------------------------------------------------------------------- |
+| app.py                  | Runs the Flask web application and serves the prediction form                                        |
+| load_crop_data.py       | Loads the dataset, cleans it, scales features, trains multiple models, and prints evaluation results |
+| Crop_recommendation.csv | Main dataset used for training and comparison                                                        |
+| requirements.txt        | Contains the Python packages needed by the project                                                   |
+| README.md               | Project documentation and setup guide                                                                |
+| templates/              | Flask template directory required for HTML pages                                                     |
+| templates/index.html    | Main frontend page shown in the browser                                                              |
+
+### Recommended Setup Flow
+
+| Step | Action                                                 |
+| ---- | ------------------------------------------------------ |
+| 1    | Create the project folder                              |
+| 2    | Add `app.py` and `load_crop_data.py` to the root       |
+| 3    | Place `Crop_recommendation.csv` in the root directory  |
+| 4    | Create `templates/` and keep `index.html` inside it    |
+| 5    | Add dependency names to `requirements.txt`             |
+| 6    | Run `python3 load_crop_data.py` to verify data loading |
+| 7    | Run `python app.py` to start the web app               |
+
+## Installation
+
+### 1. Clone the repository
 
 ```bash
 git clone <repository-url>
 cd "Crop Recommendation System"
 ```
 
-Or manually download and extract the project folder.
+### 2. Create a virtual environment
 
-### Step 2: Navigate to Project Directory
-
-```bash
-cd /path/to/"Crop Recommendation System"
-```
-
-### Step 3: Create a Virtual Environment (Recommended)
-
-**On macOS/Linux:**
+On macOS/Linux:
 
 ```bash
 python3 -m venv venv
 source venv/bin/activate
 ```
 
-**On Windows:**
+On Windows:
 
 ```bash
 python -m venv venv
 venv\Scripts\activate
 ```
 
-_(Virtual environments keep project dependencies isolated from your system Python)_
-
-### Step 4: Install Required Packages
+### 3. Install dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-This will install:
+## How to Run
 
-- **Flask** - Web framework for the UI
-- **pandas** - Data manipulation and analysis
-- **scikit-learn** - Machine learning library
-
----
-
-## ▶️ How to Run
-
-### Step 1: Activate Virtual Environment (if not already active)
-
-**On macOS/Linux:**
-
-```bash
-source venv/bin/activate
-```
-
-**On Windows:**
-
-```bash
-venv\Scripts\activate
-```
-
-### Step 2: Start the Application
+### Run the web app
 
 ```bash
 python app.py
 ```
 
-You should see output like:
+Then open:
 
-```
- * Running on http://127.0.0.1:5000
- * Debug mode: on
-```
+- http://127.0.0.1:5000
+- http://localhost:5000
 
-### Step 3: Open in Browser
-
-Click on the link or manually navigate to:
-
-```
-http://localhost:5000
-```
-
-or
-
-```
-http://127.0.0.1:5000
-```
-
-### Step 4: Stop the Application
-
-Press `Ctrl + C` in your terminal/command prompt.
-
----
-
-## 📁 Project Structure
-
-```
-Crop Recommendation System/
-├── app.py                      # Main Flask application
-├── load_crop_data.py          # Data loading and preprocessing utility
-├── Crop_recommendation.csv    # Training dataset with crop data
-├── requirements.txt           # Python dependencies
-├── templates/
-│   └── index.html            # Web interface (HTML/CSS/Form)
-└── README.md                 # This file
-```
-
-### File Descriptions:
-
-| File                        | Purpose                                                                      |
-| --------------------------- | ---------------------------------------------------------------------------- |
-| **app.py**                  | Main Flask application that handles routing, model training, and predictions |
-| **load_crop_data.py**       | Utility script for data cleaning and preprocessing                           |
-| **Crop_recommendation.csv** | Dataset containing features and target crop labels                           |
-| **requirements.txt**        | Lists all Python package dependencies and versions                           |
-| **templates/index.html**    | Frontend HTML template with CSS styling and form                             |
-
----
-
-## 💻 Usage Guide
-
-### Using the Web Application
-
-1. **Open the Application**
-   - Navigate to `http://localhost:5000` in your browser
-
-2. **Enter the Parameters**
-
-   Fill in the following fields with appropriate values:
-
-   | Parameter       | Description                        | Example | Range                |
-   | --------------- | ---------------------------------- | ------- | -------------------- |
-   | **N**           | Nitrogen content in soil (mg/kg)   | 90      | 0-200                |
-   | **P**           | Phosphorus content in soil (mg/kg) | 42      | 0-200                |
-   | **K**           | Potassium content in soil (mg/kg)  | 43      | 0-200                |
-   | **pH**          | Soil pH level                      | 6.5     | 0-14 (typically 3-9) |
-   | **Temperature** | Average temperature (°C)           | 25.5    | Variable by region   |
-   | **Humidity**    | Relative humidity (%)              | 70      | 0-100                |
-   | **Rainfall**    | Annual rainfall (cm)               | 20.0    | 0-300+               |
-
-3. **Get Recommendation**
-   - Click the "Get Crop Recommendation" button
-   - The system will display the recommended crop
-
-4. **View Results**
-   - ✅ Successful prediction shows the recommended crop
-   - ❌ Error messages help identify invalid inputs
-
-### Example Input:
-
-```
-N: 90
-P: 42
-K: 43
-pH: 6.5
-Temperature: 25.5 °C
-Humidity: 70 %
-Rainfall: 200.0 cm
-```
-
-**Output:** Recommended Crop: **Rice**
-
----
-
-## 🤖 How It Works
-
-### Model Architecture
-
-```
-Input Features (7)
-    ↓
-StandardScaler (Normalization)
-    ↓
-Random Forest Classifier
-    ↓
-Crop Prediction
-```
-
-### Step-by-Step Process:
-
-1. **Data Loading**: CSV file is loaded with soil and weather parameters
-2. **Data Cleaning**:
-   - Removes null/missing values
-   - Removes duplicate rows
-   - Renames columns for consistency
-3. **Feature Extraction**: Selects 7 features (N, P, K, pH, temperature, humidity, rainfall)
-4. **Data Splitting**: 80% training, 20% testing
-5. **Preprocessing**: StandardScaler normalizes the features to similar ranges
-6. **Model Training**: Random Forest Classifier trained on normalized data
-7. **Prediction**: New inputs are normalized and passed through the model
-
-### Why Random Forest?
-
-- **Accuracy**: Ensemble method combining multiple decision trees
-- **Robustness**: Handles non-linear relationships well
-- **Interpretability**: Feature importance can be extracted
-- **Efficiency**: Fast prediction time
-
----
-
-## 🛠️ Technologies Used
-
-| Technology       | Purpose                                        |
-| ---------------- | ---------------------------------------------- |
-| **Python 3.7+**  | Programming language                           |
-| **Flask**        | Web framework for creating the web application |
-| **scikit-learn** | Machine learning library (Random Forest model) |
-| **pandas**       | Data manipulation and analysis                 |
-| **HTML/CSS**     | Frontend interface                             |
-| **Jinja2**       | Template rendering (built into Flask)          |
-
----
-
-## 📊 Data Requirements
-
-The `Crop_recommendation.csv` file should contain the following columns:
-
-```csv
-N, P, K, pH, temperature, humidity, rainfall, crop
-90, 42, 43, 6.5, 25.5, 70, 200.0, Rice
-...
-```
-
-### Data Format:
-
-- **Numeric columns**: N, P, K, pH, temperature, humidity, rainfall
-- **Target column**: crop (name of the recommended crop)
-- **Format**: CSV (Comma-Separated Values)
-- **Missing values**: Should be minimal; duplicates will be removed automatically
-
-### Supported Crops (Examples):
-
-Rice, Corn, Wheat, Cotton, Sugarcane, Chickpea, Soybean, Maize, etc.
-_(Depends on your actual dataset)_
-
----
-
-## 🔧 Troubleshooting
-
-### Issue: "ModuleNotFoundError: No module named 'flask'"
-
-**Solution:**
+### Run the data loading and model comparison script
 
 ```bash
-pip install -r requirements.txt
+python3 load_crop_data.py
 ```
 
-### Issue: "FileNotFoundError: Crop_recommendation.csv"
+This prints the cleaning summary, dataset previews, train-test split shapes, trained model names, and evaluation table.
 
-**Solution:**
+## How It Works
 
-- Ensure the CSV file is in the same directory as `app.py`
-- Check the filename spelling and case
+| Step | Description                                                    |
+| ---- | -------------------------------------------------------------- |
+| 1    | Load the CSV dataset                                           |
+| 2    | Standardize the schema and target column                       |
+| 3    | Remove missing values and duplicates                           |
+| 4    | Split into features and target                                 |
+| 5    | Normalize features with StandardScaler                         |
+| 6    | Split data into training and testing sets                      |
+| 7    | Train SVM, KNN, and Random Forest models                       |
+| 8    | Compare model performance using accuracy and weighted F1-score |
+| 9    | Use the trained model in the Flask app for predictions         |
 
-### Issue: "Port 5000 is already in use"
+### Prediction flow in the web app
 
-**Solution:**
+| Stage      | Description                                                  |
+| ---------- | ------------------------------------------------------------ |
+| User input | User enters N, P, K, pH, temperature, humidity, and rainfall |
+| Validation | The app checks that all fields are numeric                   |
+| Scaling    | Inputs are transformed using the trained StandardScaler      |
+| Prediction | Random Forest returns the most suitable crop                 |
+| Result     | The crop name is displayed on the page                       |
 
-```bash
-# On macOS/Linux:
-lsof -i :5000
-kill -9 <PID>
+## Web App Usage
 
-# Or run on a different port:
-python app.py  # and edit app.py to change port
-```
+| Field       | Example Value | Notes                         |
+| ----------- | ------------- | ----------------------------- |
+| N           | 90            | Nitrogen in soil              |
+| P           | 42            | Phosphorus in soil            |
+| K           | 43            | Potassium in soil             |
+| pH          | 6.5           | Soil pH level                 |
+| temperature | 25.5          | Temperature in degree Celsius |
+| humidity    | 70            | Relative humidity percentage  |
+| rainfall    | 20.0          | Rainfall amount               |
 
-### Issue: Invalid numeric values error
+Example input:
 
-**Solution:**
+| Parameter   | Value |
+| ----------- | ----- |
+| N           | 90    |
+| P           | 42    |
+| K           | 43    |
+| pH          | 6.5   |
+| temperature | 25.5  |
+| humidity    | 70    |
+| rainfall    | 200.0 |
 
-- Ensure all input fields have numeric values
-- Check that values are reasonable for their respective parameters
+Expected output:
 
----
+| Result                 |
+| ---------------------- |
+| Recommended Crop: Rice |
 
-## 📈 Future Improvements
+## Technologies Used
 
-- 🔐 Add user authentication and save recommendations history
-- 📊 Display model accuracy and confidence scores
-- 📁 Support multiple CSV datasets
-- 🗺️ Add location-based recommendations
-- 📱 Create mobile app version
-- 🌐 Deploy to cloud (Heroku, AWS, Google Cloud)
-- 📈 Model comparison (test multiple algorithms)
-- 💾 Allow users to upload custom datasets
-- 📧 Email recommendation reports
-- 🎨 Enhanced UI with data visualization charts
-- 🌍 Multi-language support
-- 📝 Detailed crop care instructions
+| Technology   | Purpose                             |
+| ------------ | ----------------------------------- |
+| Python       | Core programming language           |
+| Flask        | Web application framework           |
+| pandas       | Data loading and preprocessing      |
+| scikit-learn | ML models, scaling, and evaluation  |
+| HTML/CSS     | Frontend page structure and styling |
+| Jinja2       | Template rendering in Flask         |
 
----
+## Troubleshooting
 
-## 📝 License
+| Issue                         | Fix                                                      |
+| ----------------------------- | -------------------------------------------------------- |
+| ModuleNotFoundError for Flask | Run `pip install -r requirements.txt`                    |
+| CSV file not found            | Confirm `Crop_recommendation.csv` is in the project root |
+| Port 5000 already in use      | Stop the process using the port or change the app port   |
+| Invalid numeric values        | Enter numbers only in all input fields                   |
 
-This project is open-source. Feel free to modify and use it for educational and commercial purposes.
+## Future Improvements
 
----
+| Improvement                 | Benefit                             |
+| --------------------------- | ----------------------------------- |
+| Add confidence score        | Show prediction certainty           |
+| Save recommendation history | Track previous results              |
+| Add charts and analytics    | Make the interface more informative |
+| Support more datasets       | Improve flexibility                 |
+| Deploy to cloud             | Make the app publicly accessible    |
+| Add multilingual support    | Improve usability for more users    |
 
-## 👨‍💻 Contributing
+## License
 
-Contributions are welcome! To contribute:
+This project is open-source and can be used for educational or commercial purposes.
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+## Contributing
 
----
+1. Fork the repository.
+2. Create a feature branch.
+3. Commit your changes.
+4. Push the branch.
+5. Open a pull request.
 
-## 📞 Support & Contact
-
-If you encounter any issues or have questions:
-
-- Check the [Troubleshooting](#troubleshooting) section
-- Review your input parameters
-- Ensure all dependencies are installed correctly
-
----
-
-## 🙏 Acknowledgments
-
-- Agricultural data sourced from crop research databases
-- Machine learning powered by scikit-learn
-- Built with Flask web framework
-
----
-
-## 📝 Changelog
-
-### Version 1.0 (Current)
-
-- ✅ Initial release with Random Forest model
-- ✅ Web UI with form inputs
 - ✅ Real-time crop recommendations
 - ✅ Input validation and error handling
 

@@ -5,7 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AI Crop Recommendation System</title>
     <!-- Use Google Fonts Outfit for a modern, techy but friendly vibe -->
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
     <style>
       :root {
         --primary: #10b981;
@@ -19,7 +22,7 @@
         box-sizing: border-box;
         margin: 0;
         padding: 0;
-        font-family: 'Outfit', sans-serif;
+        font-family: "Outfit", sans-serif;
       }
 
       body {
@@ -37,8 +40,13 @@
         width: 100vw;
         height: 100vh;
         z-index: -1;
-        background: linear-gradient(135deg, rgba(15, 23, 42, 0.85) 0%, rgba(15, 23, 42, 0.4) 100%), 
-                    url('https://images.unsplash.com/photo-1625246333195-78d9c38ad449?q=80&w=2070&auto=format&fit=crop');
+        background:
+          linear-gradient(
+            135deg,
+            rgba(15, 23, 42, 0.85) 0%,
+            rgba(15, 23, 42, 0.4) 100%
+          ),
+          url("https://images.unsplash.com/photo-1625246333195-78d9c38ad449?q=80&w=2070&auto=format&fit=crop");
         background-size: cover;
         background-position: center;
         filter: contrast(1.1) saturate(1.2);
@@ -46,8 +54,12 @@
       }
 
       @keyframes subtleZoom {
-        from { transform: scale(1); }
-        to { transform: scale(1.05); }
+        from {
+          transform: scale(1);
+        }
+        to {
+          transform: scale(1.05);
+        }
       }
 
       .wrapper {
@@ -93,7 +105,7 @@
         background: linear-gradient(to right, #ffffff, #a7f3d0);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
-        text-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        text-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
       }
 
       .main-subtitle {
@@ -143,7 +155,9 @@
         -webkit-backdrop-filter: blur(24px);
         border: 1px solid var(--glass-border);
         border-radius: 1.5rem;
-        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        box-shadow:
+          0 30px 60px rgba(0, 0, 0, 0.4),
+          inset 0 1px 0 rgba(255, 255, 255, 0.1);
         animation: fadeSlideUp 1s ease-out 0.2s forwards;
         opacity: 0;
       }
@@ -206,7 +220,11 @@
         width: 100%;
         padding: 1.125rem;
         margin-top: 2rem;
-        background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+        background: linear-gradient(
+          135deg,
+          var(--primary),
+          var(--primary-hover)
+        );
         color: white;
         font-size: 1.125rem;
         font-weight: 700;
@@ -221,11 +239,18 @@
       }
 
       .submit-btn::after {
-        content: '';
+        content: "";
         position: absolute;
-        top: 0; left: -100%;
-        width: 100%; height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.2),
+          transparent
+        );
         transition: 0.5s;
       }
 
@@ -276,8 +301,14 @@
       }
 
       @keyframes fadeSlideUp {
-        from { opacity: 0; transform: translateY(30px); }
-        to { opacity: 1; transform: translateY(0); }
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
       }
 
       @media (max-width: 900px) {
@@ -293,15 +324,105 @@
         }
       }
 
-      @media (max-width: 500px) {
+      @media (max-width: 760px) {
+        .wrapper {
+          flex-direction: column;
+          align-items: stretch;
+          justify-content: flex-start;
+          padding: 1.25rem 1rem 2rem;
+          gap: 1.5rem;
+        }
+
+        .hero-section,
+        .form-container {
+          width: 100%;
+          max-width: none;
+        }
+
+        .hero-section {
+          text-align: center;
+        }
+
+        .main-subtitle {
+          font-size: 1.05rem;
+          margin-bottom: 1.75rem;
+        }
+
+        .features {
+          align-items: center;
+        }
+
+        .feature {
+          width: 100%;
+          max-width: 420px;
+          justify-content: flex-start;
+          text-align: left;
+        }
+
         .form-container {
           padding: 1.5rem;
+          border-radius: 1.25rem;
         }
+
+        .result-value {
+          font-size: 2rem;
+        }
+      }
+
+      @media (max-width: 500px) {
+        .bg-image {
+          background-position: center top;
+          animation-duration: 28s;
+        }
+
+        .badge {
+          margin-bottom: 1.25rem;
+        }
+
+        .main-title {
+          font-size: 2.35rem;
+        }
+
+        .form-container {
+          padding: 1.25rem;
+        }
+
+        .form-title {
+          font-size: 1.45rem;
+          margin-bottom: 1.25rem;
+        }
+
         .grid {
           grid-template-columns: 1fr;
+          gap: 1rem;
         }
+
         .grid .field:nth-child(7) {
           grid-column: auto;
+        }
+
+        input {
+          padding: 0.8rem 1rem;
+          font-size: 0.95rem;
+        }
+
+        .submit-btn {
+          padding: 1rem;
+          font-size: 1rem;
+          margin-top: 1.5rem;
+        }
+
+        .banner {
+          margin-top: 1.25rem;
+          padding: 1rem;
+        }
+
+        .result-label {
+          font-size: 0.75rem;
+        }
+
+        .result-value {
+          font-size: 1.6rem;
         }
       }
     </style>
@@ -315,8 +436,12 @@
       <div class="hero-section">
         <div class="badge">✨ AI-Powered</div>
         <h1 class="main-title">Precision Crop Intelligence</h1>
-        <p class="main-subtitle">Remove the guesswork from agriculture. Harness advanced machine learning to identify the absolute best crop for your specific soil chemistry and climate conditions.</p>
-        
+        <p class="main-subtitle">
+          Remove the guesswork from agriculture. Harness advanced machine
+          learning to identify the absolute best crop for your specific soil
+          chemistry and climate conditions.
+        </p>
+
         <div class="features">
           <div class="feature">
             <div class="feature-icon">🌱</div>
@@ -336,7 +461,7 @@
       <!-- Right side: Glassmorphism Form -->
       <div class="form-container">
         <h2 class="form-title">Enter Farm Data</h2>
-        
+
         <form method="post">
           <div class="grid">
             {% for column in feature_columns %}
@@ -364,25 +489,23 @@
             <div class="result-label">Optimal Crop Match</div>
             <div class="result-value">{{ prediction }}</div>
           </div>
-          {% endif %}
-
-          {% if error %}
+          {% endif %} {% if error %}
           <div class="banner error">
-            <strong>Update Needed:</strong><br>
+            <strong>Update Needed:</strong><br />
             {{ error }}
           </div>
           {% endif %}
         </form>
       </div>
     </div>
-    
+
     <script>
       // Enhance the button click with a subtle loading state
-      document.querySelector('form').addEventListener('submit', function() {
-        const btn = document.getElementById('submit-btn');
-        btn.innerHTML = 'Analyzing Data...';
-        btn.style.opacity = '0.8';
-        btn.style.pointerEvents = 'none';
+      document.querySelector("form").addEventListener("submit", function () {
+        const btn = document.getElementById("submit-btn");
+        btn.innerHTML = "Analyzing Data...";
+        btn.style.opacity = "0.8";
+        btn.style.pointerEvents = "none";
       });
     </script>
   </body>
